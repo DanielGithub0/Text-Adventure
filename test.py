@@ -1,0 +1,1 @@
+print(input("what should be printed: "))

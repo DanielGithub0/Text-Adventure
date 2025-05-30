@@ -1,0 +1,13 @@
+welcome
+
+Prologue:
+this is my first coding adventure in a while
+i hope i actually continue doing it or at the very least keep going with it
+
+Start:
+Your in a dimly lit room, sitting in front of your computer
+mindlessly watching youtube. 
+Do you:
+ a. keep watching youtube
+ b. get up and leave
+:

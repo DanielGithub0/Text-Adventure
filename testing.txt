@@ -1,0 +1,3 @@
+testing 1= .. 
+Protocol print from read
+i have no clue how to continue from here
