@@ -89,7 +89,8 @@ class Attack:
         self.damage = damage
         self.range = range
         
-      #  if 
+      # if the target is within range, apply damage,
+      # otherwise, print a message indicating the target is out of range
         
 class Battle:
     def __init__(self, player, enemy):
