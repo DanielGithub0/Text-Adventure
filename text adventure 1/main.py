@@ -94,6 +94,12 @@ class Attack:
             print(f"{self.character.name} attacks {self.target.name} for {self.damage} damage!")
             if self.target.health <= 0:
                 print(f"{self.target.name} has been defeated!")
+                battle_over = True  # End the battle if the target is defeated
+                return battle_over
+        else:
+            # Print a message indicating the target is out of range
+            print(f"{self.target.name} is out of range for {self.character.name}'s attack!")
+            pass
         
       # if the target is within range, apply damage,
       # otherwise, print a message indicating the target is out of range
@@ -107,15 +113,24 @@ class Battle:
     def start_battle(self): #starting the battle, and all battle logic
         """Start the battle logic."""
         turn = True
+        battle_over = False
         if self.player.speed > self.enemy.speed:
             turn = self.player
         else:
             turn = self.enemy
         
-        match turn:
-            case self.player:
-                self.player_attack()
-                print(f"{self.player.name} attacks {self.enemy.name}!")
+        """Default distance is being used (need to be changed to use a dynamic range changing on the location of the characters)
+        Can be implemented using an array for locations (kinda like a DND map) and then using the distance between the two characters to determine if they are in range of each other"""
+        range = 2 
+        
+        while not battle_over:
+            match turn:
+                case self.player:
+                    Attack(self.player, self.enemy, range)  # Player attacks first if they have higher speed
+                    turn = self.enemy  # Switch turn to enemy
+                case self.enemy:
+                    Attack(self.enemy, self.player, range)  # Enemy attacks first if they have higher speed
+                    turn = self.player  # Switch turn to player
         
 
     def end_battle(self):
