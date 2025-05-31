@@ -82,12 +82,18 @@ class player_Character:
         return required_exp
     
 class Attack:
-    def __init__(self, character, target, damage, range):
+    def __init__(self, character, target, range):
         """Initialize an attack with a character, damage, and range."""
         self.character = character
         self.target = target
-        self.damage = damage
         self.range = range
+        
+        if self.range <= self.character.att_range:
+            # Apply damage to the target
+            self.target.health -= self.character.damage
+            print(f"{self.character.name} attacks {self.target.name} for {self.damage} damage!")
+            if self.target.health <= 0:
+                print(f"{self.target.name} has been defeated!")
         
       # if the target is within range, apply damage,
       # otherwise, print a message indicating the target is out of range
