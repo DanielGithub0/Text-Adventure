@@ -85,22 +85,24 @@ class player_Character:
     
 class Attack:
     def __init__(self, character, target, range):
+        global battle_over
         """Initialize an attack with a character, damage, and range."""
         self.character = character
         self.target = target
         self.range = range
         
-    def __call__(self, battle_over=False):
         """Execute the attack logic."""
         if self.range <= self.character.range:  # Check if the target is within range
             # Apply damage to the target
             self.target.health -= self.character.damage
             print(f"{self.character.name} attacks {self.target.name} for {self.character.damage} damage!")
-            print(f"{self.target.name} has {self.target.health} health remaining.")
-            if self.target.health <= 0:
-                print(f"{self.target.name} has been defeated!")
-                battle_over = True  # End the battle if the target is defeated
-                return battle_over
+            match self.target.health:
+                case health if health > 0:
+                    print(f"{self.target.name} has {self.target.health} health remaining.\n")
+                case heath if health <= 0:
+                    print(f"{self.target.name} has 0 health remaining.")
+                    print(f"{self.target.name} has been defeated!")
+                    battle_over = True  # End the battle if the target is defeated
         else:
             # Print a message indicating the target is out of range
             print(f"{self.target.name} is out of range for {self.character.name}'s attack!")
@@ -116,6 +118,7 @@ class Battle:
         self.enemy = enemy
 
     def start_battle(self): #starting the battle, and all battle logic
+        global battle_over
         """Start the battle logic."""
         turn = True
         battle_over = False
@@ -131,7 +134,7 @@ class Battle:
         while not battle_over:
             match turn:
                 case self.player:
-                    Attack(self.player, self.enemy, range)  # Player attacks first if they have higher speed
+                    Attack.__call__(self.player, self.enemy, range)  # Player attacks first if they have higher speed
                     turn = self.enemy  # Switch turn to enemy
                 case self.enemy:
                     Attack(self.enemy, self.player, range)  # Enemy attacks first if they have higher speed
@@ -245,7 +248,6 @@ def starting_adventure():
     print(player.range)
     Battle(player, bandit).start_battle()  # Start the battle with the bandit
     
-"""The Battle logic wont work"""
 
 if __name__ == "__main__":
     create_character()  # Call the function to create a character  
