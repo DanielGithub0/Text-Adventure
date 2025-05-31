@@ -59,10 +59,12 @@ class player_Character:
             raise ValueError(f"{race.name} cannot become {fighting_class.name}")
         self.name = name
         self.level = level
+        self.race = race
         self.classType = fighting_class.name
         self.health = fighting_class.base_health
         self.damage = fighting_class.base_damage
         self.speed = fighting_class.base_speed
+        self.range = fighting_class.range  # Attack range of the player
         self.experience = 0
         self.bag = Bag("player_bag", capacity=10)  # Initialize a bag with a capacity of 10 items
     
@@ -88,10 +90,13 @@ class Attack:
         self.target = target
         self.range = range
         
-        if self.range <= self.character.att_range:
+    def __call__(self, battle_over=False):
+        """Execute the attack logic."""
+        if self.range <= self.character.range:  # Check if the target is within range
             # Apply damage to the target
             self.target.health -= self.character.damage
-            print(f"{self.character.name} attacks {self.target.name} for {self.damage} damage!")
+            print(f"{self.character.name} attacks {self.target.name} for {self.character.damage} damage!")
+            print(f"{self.target.name} has {self.target.health} health remaining.")
             if self.target.health <= 0:
                 print(f"{self.target.name} has been defeated!")
                 battle_over = True  # End the battle if the target is defeated
@@ -145,6 +150,7 @@ class Enemy:
         self.level = lvl
         self.race = race
         self.fighting_class = Fighting_class
+        self.range = Fighting_class.range  # Attack range of the enemy
         # Calculate enemy attributes based on level and class and race
         self.health = Fighting_class.base_health + ((lvl - 1) * Fighting_class.lvl_inc_health) +((lvl - 1) * race.lvl_inc_health)
         self.damage = Fighting_class.base_damage + ((lvl - 1) * Fighting_class.lvl_inc_damage) + ((lvl - 1) * race.lvl_inc_damage)
@@ -178,6 +184,7 @@ wisp = race("Wisp", base_health=40, base_damage=3, base_speed=18, lvl_inc_health
 #adding more races allowed
 
 def create_character():
+    global player
     print("Welcome to the Text Adventure Game!")
     player_name = input("Who are you fellow adventurer? [Enter your name]: ")
     print(f"Hello, {player_name}! Let's create your character.")
@@ -233,9 +240,12 @@ def starting_adventure():
     """Placeholder for the starting adventure logic."""
     print("Your adventure begins now! Explore the world, fight enemies, and level up your character.")
     # Placeholder for adventure logic
-    pass
+    print("You encounter a lone bandit on the road.")
+    bandit = Enemy("Bandit", 1, human, warrior)  # Create an enemy for the player to fight
+    print(player.range)
+    Battle(player, bandit).start_battle()  # Start the battle with the bandit
     
-
+"""The Battle logic wont work"""
 
 if __name__ == "__main__":
     create_character()  # Call the function to create a character  
