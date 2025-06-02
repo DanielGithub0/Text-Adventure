@@ -1,10 +1,11 @@
 import os
 import random
+from tkinter import *
 
 __location__ = os.path.realpath( #this creates a call for "__location__" as the real path for [this] file
     os.path.join(os.getcwd(), os.path.dirname(__file__))) #anything called using "__location__" will have the directory of this file searched
 
-class fighting_class:
+class fighting_Class:
     def __init__(self, name, base_health=0, base_damage=0, base_speed=0, lvl_inc_health=0, lvl_inc_damage=0, lvl_inc_speed=0, att_range=0): 
         """setting the class to be able to create "classes" to set fighting style"""
         self.name = name
@@ -28,11 +29,12 @@ class race:
         self.lvl_inc_speed = lvl_inc_speed
         self.allowed_classes = allowed_classes  # List to hold allowed fighting classes    
 
-class Bag: 
+class bag: 
     """A simple bag class to hold items with a limited capacity."""
     def __init__(self, name, capacity):
         self.name = name
         self.capacity = capacity
+        self.gold_amount = 0  # Initialize gold amount
         self.items = []
 
     def add_item(self, item):
@@ -40,8 +42,19 @@ class Bag:
             self.items.append(item)
             return True
         else:
+            print(f"{self.name} is full! Cannot add {item}.")
             return False
-
+    
+    def add_gold(self, amount):
+        """Add gold to the bag."""
+        if amount > 0:
+            self.gold_amount += amount
+            print(f"{amount} gold added to {self.name}. Total gold: {self.gold_amount}")
+            return True
+        else:
+            print("Invalid amount of gold to add.")
+            return False
+    
     def remove_item(self, item):
         if item in self.items:
             self.items.remove(item)
@@ -55,35 +68,41 @@ class Bag:
 class player_Character:
     def __init__(self, name, level, race, fighting_class): 
         """defining the players character class"""
-        if fighting_class not in race.allowed_classes:
-            raise ValueError(f"{race.name} cannot become {fighting_class.name}")
+        if fighting_Class not in race.allowed_classes:
+            raise ValueError(f"{race.name} cannot become {fighting_Class.name}")
         self.name = name
         self.level = level
         self.race = race
-        self.classType = fighting_class.name
-        self.health = fighting_class.base_health
-        self.damage = fighting_class.base_damage
-        self.speed = fighting_class.base_speed
-        self.range = fighting_class.range  # Attack range of the player
+        self.classType = fighting_Class.name
+        self.health = fighting_Class.base_health + race.base_health  # Calculate health based
+        self.damage = fighting_Class.base_damage + race.base_damage  # Calculate damage
+        self.speed = fighting_Class.base_speed + race.base_speed  # Calculate speed
+        self.range = fighting_Class.range  # Attack range of the player
+        self.health_increment = fighting_Class.lvl_inc_health + race.lvl_inc_health  # Health increment per level
+        self.damage_increment = fighting_Class.lvl_inc_damage + race.lvl_inc_damage  # Damage increment per level
+        self.speed_increment = fighting_Class.lvl_inc_speed + race.lvl_inc_speed  # Speed increment per level
+        self.experience_required = 0  
         self.experience = 0
-        self.bag = Bag("player_bag", capacity=10)  # Initialize a bag with a capacity of 10 items
+        self.bag = bag(f"{self.name}'s Backpack", capacity=10)  # Initialize a bag with a capacity of 10 items
+        self.wallet = bag(f"{self.name}'s Wallet", capacity=300)  # Initialize a wallet with a capacity of 5 items
     
     def level_up(self):
         """Level up the character, increasing health and damage."""
         self.level += 1
-        self.health += (fighting_class.lvl_inc_health + random.randint(-3, 3))  # Randomly increase health by 1 to 3 times the increment
-        self.damage += (fighting_class.lvl_inc_damage + random.randint(-3, 3))
-        self.speed += (fighting_class.lvl_inc_speed + random.randint(-3, 3))
+        self.health += (fighting_Class.lvl_inc_health + random.randint(-3, 3))  # Randomly increase health by 1 to 3 times the increment
+        self.damage += (fighting_Class.lvl_inc_damage + random.randint(-3, 3))
+        self.speed += (fighting_Class.lvl_inc_speed + random.randint(-3, 3))
         self.experience = 0  # Reset experience after leveling up
         print(f"{self.name} has leveled up to level {self.level}!")
         print(f"New stats - \nHealth: {self.health}\nDamage: {self.damage}\nSpeed: {self.speed}")
+        self.lvl_exp_requirement()  # Recalculate experience required for the next level
         
     def lvl_exp_requirement(self):
         """Calculate the experience required for the next level."""
         required_exp = 3 * self.level + (self.level * (self.level ** random.randint(0,2)))
-        return required_exp
+        self.experience_required = required_exp
     
-class Attack:
+class attack:
     def __init__(self, character, target, range):
         global battle_over
         """Initialize an attack with a character, damage, and range."""
@@ -111,7 +130,7 @@ class Attack:
       # if the target is within range, apply damage,
       # otherwise, print a message indicating the target is out of range
         
-class Battle:
+class battle:
     def __init__(self, player, enemy):
         """Initialize a battle between player and enemy."""
         self.player = player
@@ -134,10 +153,10 @@ class Battle:
         while not battle_over:
             match turn:
                 case self.player:
-                    Attack.__call__(self.player, self.enemy, range)  # Player attacks first if they have higher speed
+                    attack.__call__(self.player, self.enemy, range)  # Player attacks first if they have higher speed
                     turn = self.enemy  # Switch turn to enemy
                 case self.enemy:
-                    Attack(self.enemy, self.player, range)  # Enemy attacks first if they have higher speed
+                    attack(self.enemy, self.player, range)  # Enemy attacks first if they have higher speed
                     turn = self.player  # Switch turn to player
         
 
@@ -146,7 +165,7 @@ class Battle:
         # Placeholder for ending battle logic
         pass
 
-class Enemy:
+class enemy:
     def __init__(self, name, lvl, race, Fighting_class,):
         """Initialize an enemy with basic attributes."""
         self.name = name
@@ -165,14 +184,60 @@ class Enemy:
         target.health -= self.damage
         return target.health <= 0  # Return True if the target is defeated
 
+class item:
+    def __init__(self, name, description, value):
+        """Initialize an item with basic attributes."""
+        self.name = name
+        self.description = description
+        self.value = value  # Value can be gold or other resources
+        self.is_equipped = False  # Track if the item is equipped
+
+    def equip(self):
+        """Equip the item."""
+        self.is_equipped = True
+        print(f"{self.name} has been equipped.")
+
+    def unequip(self):
+        """Unequip the item."""
+        self.is_equipped = False
+        print(f"{self.name} has been unequipped.")
+        
+class guild_Quest:
+    def __init__(self, name, description, level_requirement, reward):
+        """Initialize a guild quest with basic attributes."""
+        self.name = name
+        self.description = description
+        self.level_requirement = level_requirement
+        self.reward = reward  # Reward can be experience, or gold (a list of [experience, gold] in numerical number)
+        self.completed_quest = False  # Track if the quest is completed
+
+    def is_available(self, player):
+        """Check if the quest is available for the player."""
+        if player.level < self.level_requirement and self.completed_quest == False:
+            if self.completed_quest == True:
+                print(f"Quest '{self.name}' is already completed.")
+            else:
+                print(f"Quest '{self.name}' is not available. You need to be at least level {self.level_requirement} to take this quest.")
+            return False
+        else:
+            return True
+    
+    def give_reward(self, player, completed=True):
+        """Give the reward to the player."""
+        if self.completed_quest == True:
+            if isinstance(self.reward, list) and len(self.reward) == 2:
+                player.experience += self.reward[0]  # Add experience to the player
+                if self.reward[1] != 0:
+                    player.wallet.add_gold(self.reward[1])  # Add gold to the player's wallet
+
 
 """Classes"""
 #fighting classes that the player can choose from
-warrior = fighting_class("Warrior", base_health=120, base_damage=20, base_speed=10, lvl_inc_health=15, lvl_inc_damage=5, lvl_inc_speed=1, att_range=1)
+warrior = fighting_Class("Warrior", base_health=120, base_damage=20, base_speed=10, lvl_inc_health=15, lvl_inc_damage=5, lvl_inc_speed=1, att_range=1)
 
-ranger = fighting_class("Ranger", base_health=100, base_damage=25, base_speed=15, lvl_inc_health=10, lvl_inc_damage=4, lvl_inc_speed=2, att_range=3)
+ranger = fighting_Class("Ranger", base_health=100, base_damage=25, base_speed=15, lvl_inc_health=10, lvl_inc_damage=4, lvl_inc_speed=2, att_range=3)
 
-mage = fighting_class("Mage", base_health=80, base_damage=35, base_speed=8, lvl_inc_health=8, lvl_inc_damage=6, lvl_inc_speed=1, att_range=4)
+mage = fighting_Class("Mage", base_health=80, base_damage=35, base_speed=8, lvl_inc_health=8, lvl_inc_damage=6, lvl_inc_speed=1, att_range=4)
 #adding more fighting classes allowed
 
 """Races"""
@@ -185,6 +250,10 @@ dragonborn = race("Dragonborn", base_health=120, base_damage=15, base_speed=8, l
 
 wisp = race("Wisp", base_health=40, base_damage=3, base_speed=18, lvl_inc_health=1, lvl_inc_damage=2, lvl_inc_speed=3, allowed_classes=[mage])
 #adding more races allowed
+
+"""Starting Quests"""
+
+slimes_quest = guild_Quest("Slime Hunt", "Defeat 5 slimes in the nearby forest.", 1, [50, 10])  # 50 experience and 10 gold reward")
 
 def create_character():
     global player
@@ -226,27 +295,48 @@ def create_character():
         player_class = input("Invalid class. Please choose from Warrior, Ranger, or Mage: ")
     match player_class.lower():
         case "warrior":
-            fighting_class = warrior
+            fighting_Class_Choice = warrior
         case "ranger": 
-            fighting_class = ranger
+            fighting_Class_Choice = ranger
         case "mage":  
-            fighting_class = mage
+            fighting_Class_Choice = mage
     
-    print(f"You have chosen the {fighting_class.name} class.")
-    print(f"Thats a great choice, {player_name}! You are now a level 1 {player_race} {player_class}.\nYour starting stats are: \nHealth: {fighting_class.base_health + character_race.base_health}, \nDamage: {fighting_class.base_damage + character_race.base_damage}, \nSpeed: {fighting_class.base_speed + character_race.base_speed}.\nYou will gain:\n{fighting_class.lvl_inc_health + character_race.lvl_inc_health} health, \n{fighting_class.lvl_inc_damage + character_race.lvl_inc_damage} damage, \n{fighting_class.lvl_inc_speed + character_race.lvl_inc_speed} speed per level.")
+    print(f"You have chosen the {fighting_Class.name} class.")
+    print(f"Thats a great choice, {player_name}! You are now a level 1 {player_race} {player_class}.\nYour starting stats are: \nHealth: {fighting_Class.base_health + character_race.base_health}, \nDamage: {fighting_Class.base_damage + character_race.base_damage}, \nSpeed: {fighting_Class.base_speed + character_race.base_speed}.\nYou will gain:\n{fighting_Class.lvl_inc_health + character_race.lvl_inc_health} health, \n{fighting_Class.lvl_inc_damage + character_race.lvl_inc_damage} damage, \n{fighting_Class.lvl_inc_speed + character_race.lvl_inc_speed} speed per level.")
     print("This will deviate a bit by +/- 3 points per level to add a bit of spice to the game.")
     print(f"You are ready to embark on your adventure {player_name}!")
-    player = player_Character(player_name, 1, character_race, fighting_class)  # Create the player character
+    player = player_Character(player_name, 1, character_race, fighting_Class_Choice) #Creates the character
+    player.lvl_exp_requirement() #calculates the experience required for the next level
     starting_adventure()  # Start the adventure after character creation
     
 def starting_adventure():
     """Placeholder for the starting adventure logic."""
     print("Your adventure begins now! Explore the world, fight enemies, and level up your character.")
     # Placeholder for adventure logic
-    print("You encounter a lone bandit on the road.")
+    
+    """"print("You encounter a lone bandit on the road.")
     bandit = Enemy("Bandit", 1, human, warrior)  # Create an enemy for the player to fight
     print(player.range)
     Battle(player, bandit).start_battle()  # Start the battle with the bandit
+    #first check for battle logic.. Works
+    """
+    
+    
+    print("""In the Inn of the small village of Treiten. Waking up in the 
+          unfamiliar room you find yourself in, you look around to notice
+          nothing in particular. Walking out of the Inn the Innkeeper reminds
+          you that last night was the last night of your stay. He wishes you
+          luck on your journey and tells you to come back if you need a place
+          to stay. 
+          
+          In need of money, you decide to head to the adventurers guild. 
+          But with your level 1 character, you know that you won't be able to 
+          take any high paying jobs.
+          
+          You walk into the guild and see the Adventure Board (As its called) with
+          all of the jobs available. 
+          
+          there are 3 available jobs for your current level.""")
     
 
 if __name__ == "__main__":
@@ -280,7 +370,7 @@ while action == True & leaveOff == False:
     print("loop 2 true")
     officeLeave = input(open(os.path.join(__location__, "office.txt")).read())
     if officeLeave == "a":
-        print("fuck youuuu.. you WERE ONE step closer to not being a failure.. but u fucked that up")
+        print("fuck you.. you WERE ONE step closer to not being a failure.. but u fucked that up")
         leaveOff = False
         action = False
     elif officeLeave == "b":
