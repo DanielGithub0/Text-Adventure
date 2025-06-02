@@ -1,10 +1,37 @@
 import os
 import random
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk as ImageTK
 
 __location__ = os.path.realpath( #this creates a call for "__location__" as the real path for [this] file
     os.path.join(os.getcwd(), os.path.dirname(__file__))) #anything called using "__location__" will have the directory of this file searched
 
+class game_Window:
+    def __init__(self, title="Text Adventure Game", width=960, height=540):
+        """Initialize the game window with a title and size."""
+        self.window = tk.Tk()
+        self.window.geometry(f"{width}x{height}")
+        self.window.title(title)
+        
+        # Load and set the icon
+        icon_path = os.path.join(__location__, "githubLogo.jpg")
+        if os.path.exists(icon_path):
+            icon = ImageTK.PhotoImage(Image.open(icon_path))
+            self.window.iconphoto(True, icon)
+        else:
+            print("Icon file not found.")
+        self.window.config(bg="#001373")
+        
+    def run(self):
+        """Run the main loop of the game window."""
+        self.window.mainloop()
+        
+    def print_onto_window(self, text):
+        """Print text onto the game window."""
+        label = tk.Label(self.window, text=text, bg="#001373", fg="white", font=("Arial", 14), padx=20, pady=20)
+        label.pack()
+        
 class fighting_Class:
     def __init__(self, name, base_health=0, base_damage=0, base_speed=0, lvl_inc_health=0, lvl_inc_damage=0, lvl_inc_speed=0, att_range=0): 
         """setting the class to be able to create "classes" to set fighting style"""
@@ -340,6 +367,9 @@ def starting_adventure():
     
 
 if __name__ == "__main__":
+    game = game_Window()  # Create an instance of the game window
+    game.run()  # Run the game window
+    game.print_onto_window("Welcome to the Text Adventure Game!")  # Print welcome message onto the window
     create_character()  # Call the function to create a character  
     
 #player creation example
