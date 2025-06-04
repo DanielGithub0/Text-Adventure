@@ -37,7 +37,7 @@ class windows(tk.Tk):
         self.wm_title("Test Application")
 
         # creating a frame and assigning it to container
-        container = tk.Frame(self, height=400, width=600)
+        container = tk.Frame(self, height=540, width=960)
         # specifying the region where the frame is packed in root
         container.pack(side="top", fill="both", expand=True)
 
@@ -68,10 +68,15 @@ class MainPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Main Page", font=("Arial", 24))
-        label.pack(pady=10)
+        text = tk.Label(self, text="This is the main page of the application. You can navigate to other pages from here.")
+        label.pack(pady=10, padx=10)
+        text.pack(pady=10, padx=10)
 
         button = ttk.Button(self, text="Go to Side Page",
                             command=lambda: controller.show_frame(SidePage))
+        button2 = ttk.Button(self, text="Go to Completion Screen",
+                            command=lambda: controller.show_frame(CompletionScreen))
+        button2.pack()
         button.pack()
     
 class SidePage(tk.Frame):  
