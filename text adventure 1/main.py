@@ -328,7 +328,7 @@ def create_character():
         case "mage":  
             fighting_Class_Choice = mage
     
-    print(f"You have chosen the {fighting_Class.name} class.")
+    print(f"You have chosen the {fighting_Class_Choice.name} class.")
     print(f"Thats a great choice, {player_name}! You are now a level 1 {player_race} {player_class}.\nYour starting stats are: \nHealth: {fighting_Class.base_health + character_race.base_health}, \nDamage: {fighting_Class.base_damage + character_race.base_damage}, \nSpeed: {fighting_Class.base_speed + character_race.base_speed}.\nYou will gain:\n{fighting_Class.lvl_inc_health + character_race.lvl_inc_health} health, \n{fighting_Class.lvl_inc_damage + character_race.lvl_inc_damage} damage, \n{fighting_Class.lvl_inc_speed + character_race.lvl_inc_speed} speed per level.")
     print("This will deviate a bit by +/- 3 points per level to add a bit of spice to the game.")
     print(f"You are ready to embark on your adventure {player_name}!")
@@ -365,13 +365,16 @@ def starting_adventure():
           
           there are 3 available jobs for your current level.""")
     
-
+    
+if __name__ == "__main__":
+    create_character()  # Call the function to create a character
+'''
 if __name__ == "__main__":
     game = game_Window()  # Create an instance of the game window
     game.run()  # Run the game window
     game.print_onto_window("Welcome to the Text Adventure Game!")  # Print welcome message onto the window
     create_character()  # Call the function to create a character  
-    
+    '''
 #player creation example
 #player = Character("Alice", 1, warrior)
 #print(player.health)  # 150

@@ -48,7 +48,7 @@ class windows(tk.Tk):
         # We will now create a dictionary of frames
         self.frames = {}
         # we'll create the frames themselves later but let's add the components to the dictionary.
-        for F in (MainPage, SidePage, CompletionScreen):
+        for F in (MainPage, SidePage, CompletionScreen):#creating the dictionary of frames (a collection of all of the possible frames in the application)
             frame = F(container, self)
 
             # the windows class acts as the root window for the frames.
@@ -56,7 +56,7 @@ class windows(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         # Using a method to switch frames
-        self.show_frame(MainPage)
+        self.show_frame(MainPage)#which frame to start on
             
     def show_frame(self, cont):
         frame = self.frames[cont]
