@@ -33,7 +33,7 @@ class TodoApp:
         self.root.title("Peroxide To Do")
         self.root.geometry("480x420")
         self.theme = DarkTheme()
-        
+         
         self.theme = {DarkTheme, LightTheme}
         # Configure root window background
         self.root.configure(bg=self.theme.BACKGROUND)

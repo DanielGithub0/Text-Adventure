@@ -329,7 +329,7 @@ def create_character():
             fighting_Class_Choice = mage
     
     print(f"You have chosen the {fighting_Class_Choice.name} class.")
-    print(f"Thats a great choice, {player_name}! You are now a level 1 {player_race} {player_class}.\nYour starting stats are: \nHealth: {fighting_Class.base_health + character_race.base_health}, \nDamage: {fighting_Class.base_damage + character_race.base_damage}, \nSpeed: {fighting_Class.base_speed + character_race.base_speed}.\nYou will gain:\n{fighting_Class.lvl_inc_health + character_race.lvl_inc_health} health, \n{fighting_Class.lvl_inc_damage + character_race.lvl_inc_damage} damage, \n{fighting_Class.lvl_inc_speed + character_race.lvl_inc_speed} speed per level.")
+    print(f"Thats a great choice, {player_name}! You are now a level 1 {player_race} {player_class}.\nYour starting stats are: \nHealth: {fighting_Class_Choice.base_health + character_race.base_health}, \nDamage: {fighting_Class_Choice.base_damage + character_race.base_damage}, \nSpeed: {fighting_Class_Choice.base_speed + character_race.base_speed}.\nYou will gain:\n{fighting_Class_Choice.lvl_inc_health + character_race.lvl_inc_health} health, \n{fighting_Class_Choice.lvl_inc_damage + character_race.lvl_inc_damage} damage, \n{fighting_Class_Choice.lvl_inc_speed + character_race.lvl_inc_speed} speed per level.")
     print("This will deviate a bit by +/- 3 points per level to add a bit of spice to the game.")
     print(f"You are ready to embark on your adventure {player_name}!")
     player = player_Character(player_name, 1, character_race, fighting_Class_Choice) #Creates the character
